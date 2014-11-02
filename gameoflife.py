@@ -74,6 +74,7 @@ def new_world():
 
 def draw_world(world):
     global rows, cols, canvas
+    canvas.delete('all')
     colors = ["blue", "yellow", "red"]
     for x in xrange(rows):
         for y in xrange(cols):
