@@ -1,93 +1,90 @@
 import Tkinter as tk
 
+world = []
+canvas = None
+rows = 0
+cols = 0
+
+
 def init_board(filename):
     global world, cols, rows
     with open(filename, "r") as f:
         cols = int(f.readline())
         rows = int(f.readline())
-        world = []
-        for i in range(rows):
+        for i in xrange(rows):
             world.append([False]*cols)
-        a=0
-        b=0
+        a = 0
+        b = 0
         for line in f.readlines():
             for chr in line:
                 if chr == "*":
                     world[b][a] = True   
                 elif chr == ".":
                     world[b][a] = False
-                b+=1
-            b=0
-            a+=1
-
+                b += 1
+            b = 0
+            a += 1
     create_board()
+
 
 def create_board():
     global window, canvas, world
     window = tk.Tk()
-    canvas = tk.Canvas(window, width=cols*10, height=rows*10, bg='black')
+    canvas = tk.Canvas(window, width=cols*10, height=rows*10, bg='red')
     canvas.pack(expand=tk.YES, fill=tk.BOTH)
     update()
 
+
+def new_world():
+    global world, rows, cols
+    nw = []
+    for x in xrange(rows):
+        a = []
+        for y in xrange(cols):
+            neighbours = []
+            if x + 1 < rows:  # bottom
+                neighbours.append(world[x+1][y])
+            if x - 1 >= 0:  # top
+                neighbours.append(world[x-1][y])
+            if y - 1 >= 0:  # left
+                neighbours.append(world[x][y-1])
+            if y + 1 < cols:  # right
+                neighbours.append(world[x][y+1])
+            if x + 1 < rows and y + 1 < cols:  # bottom right
+                neighbours.append(world[x+1][y+1])
+            if x - 1 >= 0 and y - 1 >= 0:  # top left
+                neighbours.append(world[x-1][y-1])
+            if y - 1 >= 0 and x + 1 < rows:  # bottom left
+                neighbours.append(world[x+1][y-1])
+            if y + 1 < cols and x - 1 >= 0:  # top right
+                neighbours.append(world[x-1][y+1])
+
+            res = len([n for n in neighbours if n])
+            if res < 2 or res > 3:
+                a.append(False)
+            elif res == 3:
+                a.append(True)
+            elif res == 2:
+                a.append(world[x][y])
+
+        nw.append(a)
+    world = nw
+
+
+def draw_world(world):
+    global rows, cols, canvas
+    for x in xrange(rows):
+        for y in xrange(cols):
+            fill = 'yellow' if world[x][y] else 'black'
+            canvas.create_rectangle(x*10, y*10, x*10+10, y*10+10, fill=fill)
+
+
 def update():
-    global window, canvas, world
-    l=0
-    o=0
-    for line in range(1,rows-1):
-        for obj in range(1,cols-1):
-            if not world[l][o]:
-		if ne(l,o) == 3:
-			on(l,o)
-			break
-	    if world[l][o]:
-		if ne(l,o) >= 4:
-			off(l,o)
-			break
-		if ne(l,o) < 2:
-			off(l,o)
-			break
-		if ne(l,o) == 2 or 3:
-			on(l,o)
-			break
-            o+=1
-        o=0
-        l+=1
+    global world, window
+    draw_world(world)
+    new_world()
+    window.after(300, update)
 
-    window.after(100, update)
-
-def ne(r,c):
-    i = 0
-    if world[r][c+1]:
-        i+=1
-    if world[r][c-1]:
-        i+=1
-    if world[r-1][c]:
-        i+=1
-    if world[r+1][c]:
-        i+=1 
-    if world[r-1][c-1]:
-        i+=1
-    if world[r-1][c+1]:
-        i+=1
-    if world[r+1][c-1]: 
-        i+=1
-    if world[r+1][c+1]:
-        i+=1
-    return int(i)
-    
-def on(row, col):
-    global canvas
-    world[row][col] = True
-    row *= 10
-    col *= 10
-    canvas.create_rectangle(row, col, row+10, col+10, fill='yellow')
-
-def off(row, col):
-    global canvas
-    world[row][col] = False
-    row *= 10
-    col *= 10
-    canvas.create_rectangle(row, col, row+10, col+10, fill='black')
 
 init_board("initialSetup1.txt")
 
