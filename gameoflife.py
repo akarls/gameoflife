@@ -1,4 +1,5 @@
 import Tkinter as tk
+import random
 
 world = []
 canvas = None
@@ -30,7 +31,7 @@ def init_board(filename):
 def create_board():
     global window, canvas, world
     window = tk.Tk()
-    canvas = tk.Canvas(window, width=cols*10, height=rows*10, bg='red')
+    canvas = tk.Canvas(window, width=cols*10, height=rows*10, bg='grey')
     canvas.pack(expand=tk.YES, fill=tk.BOTH)
     update()
 
@@ -73,17 +74,19 @@ def new_world():
 
 def draw_world(world):
     global rows, cols, canvas
+    colors = ["blue", "yellow", "red"]
     for x in xrange(rows):
         for y in xrange(cols):
-            fill = 'yellow' if world[x][y] else 'black'
-            canvas.create_rectangle(x*10, y*10, x*10+10, y*10+10, fill=fill)
+            c = random.choice(colors)
+            fill = c if world[x][y] else 'black'
+            canvas.create_oval(x*10, y*10, x*10+10, y*10+10, fill=fill)
 
 
 def update():
     global world, window
     draw_world(world)
     new_world()
-    window.after(300, update)
+    window.after(100, update)
 
 
 init_board("initialSetup1.txt")
