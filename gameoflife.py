@@ -27,12 +27,20 @@ def init_board(filename):
             a += 1
     create_board()
 
+def callback(event):
+    canvas.focus_set()
+    world[event.x/10][event.y/10] = True
+    print "clicked at", event.x, event.y
+
 
 def create_board():
     global window, canvas, world
     window = tk.Tk()
     canvas = tk.Canvas(window, width=cols*10, height=rows*10, bg='grey')
+    canvas.bind("<Button-1>", callback)
+    canvas.bind("<B1-Motion>", callback)
     canvas.pack(expand=tk.YES, fill=tk.BOTH)
+
     update()
 
 
@@ -87,9 +95,8 @@ def update():
     global world, window
     draw_world(world)
     new_world()
-    window.after(100, update)
+    window.after(500, update)
 
-
-init_board("initialSetup1.txt")
+init_board("init3.txt")
 
 window.mainloop()
