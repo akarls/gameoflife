@@ -1,6 +1,7 @@
 import Tkinter as tk
 import random
 
+Filename = "init3.txt"
 world = []
 canvas = None
 rows = 0
@@ -38,6 +39,7 @@ def create_board():
     window = tk.Tk()
     canvas = tk.Canvas(window, width=cols*10, height=rows*10, bg='grey')
     canvas.bind("<Button-1>", callback)
+    canvas.bind("<Button-2>", paus)
     canvas.bind("<B1-Motion>", callback)
     canvas.pack(expand=tk.YES, fill=tk.BOTH)
 
@@ -83,20 +85,26 @@ def new_world():
 def draw_world(world):
     global rows, cols, canvas
     canvas.delete('all')
-    colors = ["blue", "yellow", "red"]
+    colors = ["white"]
     for x in xrange(rows):
         for y in xrange(cols):
             c = random.choice(colors)
             fill = c if world[x][y] else 'black'
-            canvas.create_oval(x*10, y*10, x*10+10, y*10+10, fill=fill)
+            canvas.create_oval(x*10, y*10, x*10+10, y*10+10, fill=fill, outline='blue')
 
 
 def update():
     global world, window
     draw_world(world)
     new_world()
-    window.after(500, update)
+    window.after(10, update)
 
-init_board("init3.txt")
+def paus():
+    global world, window
+    print "paus"
+    window.after_cancel
+
+
+init_board(Filename)
 
 window.mainloop()
