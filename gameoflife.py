@@ -1,7 +1,7 @@
 import Tkinter as tk
 import random
 
-Filename = "init3.txt"
+Filename = "initialSetup1.txt"
 world = []
 canvas = None
 rows = 0
